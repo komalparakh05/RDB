@@ -23,3 +23,108 @@
 23. Avoid prefix “sp_” with user defined stored procedure name because SQL server first search the user defined procedure in the master database and after that in the current session database.
 24. Avoid use of Non-correlated Scalar Sub Query. Use this query as a separate query instead of part of the main query and store the output in a variable, which can be referred to in the main query or later part of the batch.
 25. Avoid Multi-statement Table Valued Functions (TVFs). Multi-statement TVFs are more costly than inline TVFs.
+
+
+
+
+---- 1. List of customers
+SELECT * FROM customers c2;
+
+---- 2. number of different products?
+select count(distinct product_id) from products p; 
+
+---- 3. count of employees
+select count(employee_id) from employees e;
+
+---- 4. total overall revenue
+select sum(unit_price*quantity*(1-discount)) from order_details od;
+
+---- 5. total revenue for one specific year
+select sum(unit_price*quantity*(1-discount)) from order_details od
+left join orders o on od.order_id = o.order_id 
+where extract(year from o.order_date) = '1996';
+
+---- 6. list of countries covered by delivery
+select distinct ship_country from orders o;
+
+---- 7. list of available transporters
+select company_name from shippers s; 
+
+---- 8. number of customer per countries
+select count(customer_id),country from customers c 
+group by c.country;
+
+---- 9. number of orders which are "ordered" but not shipped
+select count(order_id) from orders o 
+where shipped_date is null; 
+
+---- 10. all the orders from france and belgium
+select * from orders o 
+where o.ship_country = 'Belgium'
+or o.ship_country = 'France';
+
+---- 11. most expensive products
+----This query seems wrong because most expensive product could be just 1, and in query they are asking for list of most expensive products
+SELECT * FROM products p 
+where p.unit_price = (
+        SELECT 
+            MAX(unit_price)
+        FROM
+            products p2);
+           
+---- 12. list of discontinued products
+select * from products p 
+where discontinued = '1';            
+           
+---- 13. count of product per category
+select sum(units_on_order + units_in_stock),category_id from products p 
+group by p.category_id;
+
+---- 14. average order price
+select order_id,avg(unit_price) from order_details od 
+group by order_id;
+
+---- 15. revenue per category
+select sum(unit_price * units_on_order),category_id from products p 
+group by category_id;
+
+---- 16. number of orders per shipper
+select ship_via,count(order_id) from orders o 
+group by ship_via
+order by ship_via asc
+
+---- 17. number of orders per employee
+select employee_id , count(order_id) from orders o 
+group by employee_id 
+order by employee_id asc ;
+
+---- 18. total revenue per supplier
+--This query is not possible because even though the list is executing but the supplier_id values are repeating
+select distinct p.supplier_id p,unit_price * p.units_on_order as Revenue from products p 
+join suppliers s on s.supplier_id = p.supplier_id 
+order by p.supplier_id asc;
+
+---- 19. insert a product with its category
+INSERT INTO products (product_id,product_name,supplier_id,category_id,quantity_per_unit,unit_price,units_in_stock,units_on_order,reorder_level,discontinued)
+VALUES ('78','abc','1','8','5','20','5','4','2','0');
+
+---- 20. create an order (what is required?)
+insert into orders
+values('11078','RATTC','1','1998-05-06','1998-06-03','1997-05-24','2','8.236444332','Rattlesnake Canyon Grocery','5 Rue du Lion','Paris','RJ','94400','France')
+
+---- 21. change the shipped delivery date
+ update orders 
+set shipped_date = '1996-05-15'
+where shipped_date = '1996-07-10';
+    
+  
+
+select * from Candidate_Students cs,Payment_Candidate pc
+where cs.CandidateId=pc.Candidate_Student;
+
+
+select t.Teachers_Email_Id,t.Bank_details,t.Contact,pt.PaymentAmount from Teacher t,Payment_Teacher pt
+where t.Teachers_Email_Id=pt.Teacher;
+
+
+select a.Attend_Status,sr.Grade from Attendance a,Student_Result sr;
