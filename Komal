@@ -116,6 +116,8 @@ values('11078','RATTC','1','1998-05-06','1998-06-03','1997-05-24','2','8.2364443
  update orders 
 set shipped_date = '1996-05-15'
 where shipped_date = '1996-07-10';
+
+
     
   
 
@@ -125,6 +127,6 @@ where cs.CandidateId=pc.Candidate_Student;
 
 select t.Teachers_Email_Id,t.Bank_details,t.Contact,pt.PaymentAmount from Teacher t,Payment_Teacher pt
 where t.Teachers_Email_Id=pt.Teacher;
-
+select count(*) from (select program_course_code_ref,count(*) as count1 from programs p group by p.program_course_code_ref) as T1 where T1.count1 = (select count(distinct p1.program_assignment) from programs p1 );
 
 select a.Attend_Status,sr.Grade from Attendance a,Student_Result sr;
